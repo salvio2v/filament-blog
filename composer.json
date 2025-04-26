@@ -1,12 +1,13 @@
 {
-    "name": "firefly/filament-blog",
+    "name": "salvio/filament-blog",
     "type": "library",
-    "description": "An advance blog package for Filament Admin Panel",
+    "description": "An advance blog package for Filament Admin Panel and MongoDB compatible",
     "keywords": [
         "filament",
         "laravel",
         "blog",
-        "firefly"
+        "firefly",
+        "mongodb"
     ],
     "license": "MIT",
     "authors": [
@@ -14,6 +15,12 @@
             "name": "Asmit Nepali",
             "email": "asmit@thefireflytech.com",
             "homepage": "https://github.com/asmit-firefly",
+            "role": "Developer"
+        },
+        {
+            "name": "Salvatore Esposito",
+            "email": "salvatore.esposito2v@gmail.com",
+            "homepage": "https://github.com/salvio2v/filament-blog",
             "role": "Developer"
         }
     ],
