@@ -5,9 +5,9 @@ namespace Firefly\FilamentBlog\Models;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Firefly\FilamentBlog\Database\Factories\ShareSnippetFactory;
-use Illuminate\Database\Eloquent\Builder;
+use MongoDB\Laravel\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class ShareSnippet extends Model
 {

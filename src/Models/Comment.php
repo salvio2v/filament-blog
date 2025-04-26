@@ -6,10 +6,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Firefly\FilamentBlog\Database\Factories\CommentFactory;
-use Illuminate\Database\Eloquent\Builder;
+use MongoDB\Laravel\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Relations\BelongsTo;
 
 class Comment extends Model
 {
@@ -34,9 +34,9 @@ class Comment extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'user_id' => 'integer',
-        'post_id' => 'integer',
+    #    'id' => 'integer',
+    #    'user_id' => 'integer',
+    #    'post_id' => 'integer',
         'approved' => 'boolean',
         'approved_at' => 'datetime',
     ];
@@ -65,7 +65,7 @@ class Comment extends Model
     {
         return [
             Select::make('user_id')
-                ->relationship('user', config('filamentblog.user.columns.name'))
+                ->relationship('user', 'name')
                 ->required(),
             Select::make('post_id')
                 ->relationship('post', 'title')

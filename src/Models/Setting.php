@@ -11,7 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ColorPicker;
 use Firefly\FilamentBlog\Database\Factories\SettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use Symfony\Component\Console\Descriptor\TextDescriptor;
 
 class Setting extends Model

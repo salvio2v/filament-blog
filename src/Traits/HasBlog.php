@@ -7,7 +7,7 @@ use Firefly\FilamentBlog\Models\Post;
 
 trait HasBlog
 {
-    public function name()
+    public function GetName()
     {
         return $this->{config('filamentblog.user.columns.name')};
     }

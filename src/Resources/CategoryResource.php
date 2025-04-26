@@ -36,8 +36,8 @@ class CategoryResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug'),
                 Tables\Columns\TextColumn::make('posts_count')
-                    ->badge()
-                    ->counts('posts'),
+                    ->badge(),
+//                    ->counts('posts'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

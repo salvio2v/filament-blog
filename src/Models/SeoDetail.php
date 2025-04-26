@@ -8,8 +8,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Firefly\FilamentBlog\Database\Factories\SeoDetailFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Relations\BelongsTo;
 
 class SeoDetail extends Model
 {
@@ -55,9 +55,9 @@ class SeoDetail extends Model
     ];
 
     protected $casts = [
-        'id' => 'integer',
-        'post_id' => 'integer',
-        'user_id' => 'integer',
+    #    'id' => 'integer',
+    #    'post_id' => 'integer',
+    #    'user_id' => 'integer',
         'keywords' => 'json',
     ];
 

@@ -15,12 +15,12 @@ use Filament\Forms\Set;
 use FilamentTiptapEditor\TiptapEditor;
 use Firefly\FilamentBlog\Database\Factories\PostFactory;
 use Firefly\FilamentBlog\Enums\PostStatus;
-use Illuminate\Database\Eloquent\Builder;
+use MongoDB\Laravel\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Relations\HasMany;
+use MongoDB\Laravel\Relations\BelongsTo;
+use MongoDB\Laravel\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -38,6 +38,8 @@ class Post extends Model
         'cover_photo_path',
         'photo_alt_text',
         'user_id',
+        'category_ids',
+        'tag_ids',
     ];
 
     protected $dates = [
@@ -50,11 +52,11 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
+        # 'id' => 'integer',
         'published_at' => 'datetime',
         'scheduled_for' => 'datetime',
         'status' => PostStatus::class,
-        'user_id' => 'integer',
+        # 'user_id' => 'integer',
     ];
 
     protected static function newFactory()
@@ -62,19 +64,20 @@ class Post extends Model
         return new PostFactory();
     }
 
-    public function categories()
+
+    public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, config('filamentblog.tables.prefix').'category_'.config('filamentblog.tables.prefix').'post');
+        return $this->belongsToMany(Category::class,config('filamentblog.tables.prefix'). 'categories');
     }
 
-    public function comments(): hasmany
+    public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class,config('filamentblog.tables.prefix').'post_'.config('filamentblog.tables.prefix').'tag');
+        return $this->belongsToMany(Tag::class,config('filamentblog.tables.prefix'). 'tags');
     }
 
     public function user(): BelongsTo
@@ -124,10 +127,12 @@ class Post extends Model
 
     public function relatedPosts($take = 3)
     {
-        return $this->whereHas('categories', function ($query) {
-            $query->whereIn(config('filamentblog.tables.prefix').'categories.id', $this->categories->pluck('id'))
-                ->whereNotIn(config('filamentblog.tables.prefix').'posts.id', [$this->id]);
-        })->published()->with('user')->take($take)->get();
+        return Post::where('_id', '!=', $this->_id) // escludi il post corrente
+        ->whereIn('category_ids', $this->category_ids)           // supponendo che i post abbiano un campo array `category_ids`
+        ->where('status', 'published')                    // equivalente di `published()`
+        ->with('user')
+            ->take($take)
+            ->get();
     }
 
     protected function getFeaturePhotoAttribute()
@@ -142,13 +147,16 @@ class Post extends Model
                 ->schema([
                     Fieldset::make('Titles')
                         ->schema([
-                            Select::make('category_id')
-                                ->multiple()
-                                ->preload()
-                                ->createOptionForm(Category::getForm())
-                                ->searchable()
-                                ->relationship('categories', 'name')
-                                ->columnSpanFull(),
+                            Select::make('category_ids')  // 'category_ids' è il campo che memorizza gli ID delle categorie
+                                ->multiple()  // Permette di selezionare più categorie
+                                ->preload()  // Carica tutte le categorie prima che l'utente inizi a cercare
+                                ->searchable()  // Permette di cercare tra le categorie
+                                ->createOptionForm(Category::getForm())  // Apre il form per creare una nuova categoria direttamente dal select
+                                ->options(function () {
+                                    // Carica tutte le categorie da MongoDB
+                                    return Category::all()->pluck('name', '_id');  // 'name' è il campo visibile, '_id' è quello che verrà salvato
+                                })
+                                ->columnSpanFull(),  // Rende il campo a larghezza piena
 
                             TextInput::make('title')
                                 ->live(true)
@@ -167,13 +175,16 @@ class Post extends Model
                                 ->maxLength(255)
                                 ->columnSpanFull(),
 
-                            Select::make('tag_id')
-                                ->multiple()
-                                ->preload()
-                                ->createOptionForm(Tag::getForm())
-                                ->searchable()
-                                ->relationship('tags', 'name')
-                                ->columnSpanFull(),
+                            Select::make('tag_ids')  // 'tag_ids' è il campo che memorizza gli ID dei tag
+                                ->multiple()  // Permette di selezionare più tag
+                                ->preload()  // Carica tutti i tag prima che l'utente inizi a cercare
+                                ->searchable()  // Permette di cercare tra i tag
+                                ->createOptionForm(Tag::getForm())  // Apre il form per creare un nuovo tag direttamente dal select
+                                ->options(function () {
+                                    // Carica tutti i tag da MongoDB
+                                    return Tag::all()->pluck('name', '_id');  // 'name' è il campo visibile, '_id' è quello che verrà salvato
+                                })
+                                ->columnSpanFull(),  // Rende il campo a larghezza piena
                         ]),
                     TiptapEditor::make('body')
                         ->profile('default')
@@ -216,7 +227,7 @@ class Post extends Model
                                 ->native(false),
                         ]),
                     Select::make(config('filamentblog.user.foreign_key'))
-                        ->relationship('user', config('filamentblog.user.columns.name'))
+                        ->relationship('user', 'name')
                         ->nullable(false)
                         ->default(auth()->id()),
 

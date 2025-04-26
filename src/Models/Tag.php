@@ -6,8 +6,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Firefly\FilamentBlog\Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Tag extends Model
@@ -17,16 +17,17 @@ class Tag extends Model
     protected $fillable = [
         'name',
         'slug',
+        'post_ids',
     ];
 
     protected $casts = [
-        'id' => 'integer',
+       // 'id' => 'integer',
     ];
 
     public function posts(): BelongsToMany
     {
 
-        return $this->belongsToMany(Post::class, config('filamentblog.tables.prefix').'post_'.config('filamentblog.tables.prefix').'tag');
+        return $this->belongsToMany(Post::class, config('filamentblog.tables.prefix'). 'tags');
     }
 
     public static function getForm(): array

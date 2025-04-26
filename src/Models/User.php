@@ -4,10 +4,12 @@ namespace Firefly\FilamentBlog\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Firefly\FilamentBlog\Database\Factories\UserFactory;
-use Firefly\FilamentBlog\Traits\HasBlog;
+use Firefly\FilamentBlog\Models\Post;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Firefly\FilamentBlog\Traits\HasBlog;
+use MongoDB\Laravel\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use MongoDB\Laravel\Relations\HasMany;
 
 class User extends Authenticatable
 {

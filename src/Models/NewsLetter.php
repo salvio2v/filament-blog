@@ -4,7 +4,7 @@ namespace Firefly\FilamentBlog\Models;
 
 use Firefly\FilamentBlog\Database\Factories\NewsLetterFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 
 class NewsLetter extends Model
 {
@@ -26,7 +26,7 @@ class NewsLetter extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
+    #    'id' => 'integer',
         'active' => 'boolean',
     ];
 
